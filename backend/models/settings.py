@@ -16,4 +16,6 @@ class Setting(Base):
     disk_threshold_max=Column(FLOAT, nullable=False)
     telegram_chat_id=Column(String, nullable=False)
     agent_timeout=Column(FLOAT, nullable=False)
+    telegram_token_id=Column(String, nullable=False)
+    
     

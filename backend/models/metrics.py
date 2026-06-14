@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, DateTime,ForeignKey, FLOAT, TEXT
+from sqlalchemy import Column, String, DateTime,ForeignKey, FLOAT, TEXT, JSON
 from sqlalchemy.dialects.postgresql import UUID,ARRAY
 from database.database import Base
 import uuid
@@ -10,6 +10,6 @@ class metric(Base):
     user_id=Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
     cpu=Column(FLOAT, nullable=False)
     ram=Column(FLOAT, nullable=False)
-    disk=Column(FLOAT, nullable=False)
+    disk=Column(JSON, nullable=False)
     processes=Column(ARRAY(String), nullable=False)
     created_at=Column(DateTime, default=datetime.utcnow)
