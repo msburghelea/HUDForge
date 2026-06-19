@@ -1,6 +1,8 @@
 from dotenv import load_dotenv
 import os
 import json
+import tkinter as tk
+from tkinter import simpledialog, messagebox
 
 load_dotenv()
 
@@ -31,18 +33,26 @@ def _save_config(config):
         json.dump(config, f, indent=2)
 
 
+def _ask_token():
+    root = tk.Tk()
+    root.withdraw()
+    token = simpledialog.askstring("HUDForge", "Pega tu Agent Token:", parent=root)
+    root.destroy()
+    return token.strip() if token else None
+
+
 def _run_setup():
-    print("=== Configuracion inicial de HUDForge ===")
-    token = ""
-    while not token:
-        token = input("Pega tu Agent Token y pulsa Enter: ").strip()
+    token = _ask_token()
+    if not token:
+        root = tk.Tk()
+        root.withdraw()
+        messagebox.showerror("HUDForge", "No se proporcionó un token. El agente se cerrará.")
+        root.destroy()
+        return None
 
     config = _load_config()
     config["agent_token"] = token
     _save_config(config)
-
-    print(f"Configuracion guardada en: {_config_path()}")
-    print("El agente empezara a enviar metricas.\n")
     return config
 
 
@@ -51,9 +61,13 @@ def get_agent_token():
     token = config.get("agent_token") or os.getenv("AGENT_TOKEN")
     if not token:
         config = _run_setup()
-        token = config.get("agent_token")
+        token = config.get("agent_token") if config else None
     return token
 
 
 def get_backend():
     return os.getenv("BACKEND_URL") or DEFAULT_BACKEND_URL
+
+
+def get_log_path():
+    return os.path.join(_config_dir(), "agent.log")

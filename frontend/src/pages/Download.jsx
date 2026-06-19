@@ -19,7 +19,7 @@ function Download() {
 
                 <div className="bg-white border border-gray-200 rounded-lg p-6 mb-4">
                     <h2 className="text-sm font-medium text-gray-700 mb-3">1. Descarga el agente</h2>
-                    <button disabled className="bg-gray-100 text-gray-400 rounded px-4 py-2 text-sm cursor-not-allowed">Descargar HUDForge Agent (.exe), disponible próximamente</button>
+                    <a href="https://github.com/msburghelea/HUDForge/releases/tag/v1.0.0" target="_blank" rel="noopener noreferrer" className="inline-block bg-green-600 text-white rounded px-4 py-2 text-sm hover:bg-green-700">Descargar HUDForge Agent (.exe)</a>
                 </div>
 
                 <div className="bg-white border border-gray-200 rounded-lg p-6 mb-4">
