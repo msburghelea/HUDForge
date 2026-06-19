@@ -15,7 +15,7 @@ function Login() {
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({username: username, password: password})
         }
-        fetch("http://localhost:8000/auth/login", requestOptions)
+        fetch(`${import.meta.env.VITE_BACKEND_URL}/auth/login`, requestOptions)
         .then(response=> {
             if (!response.ok){
                 throw new Error('Credenciales incorrectas')

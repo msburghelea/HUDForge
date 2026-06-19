@@ -17,7 +17,7 @@ function Settings() {
 
     useEffect(() => {
         const token = localStorage.getItem('token')
-        fetch('http://localhost:8000/settings/settings', {
+        fetch(`${import.meta.env.VITE_BACKEND_URL}/settings/settings`, {
             headers: {
                 'authorization': `Bearer ${token}`
             }
@@ -63,7 +63,7 @@ function Settings() {
                 agent_timeout: parseFloat(agentTimeout)
             })
         }
-        fetch('http://localhost:8000/settings/settings', requestOptions)
+        fetch(`${import.meta.env.VITE_BACKEND_URL}/settings/settings`, requestOptions)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Error al guardar la configuración')

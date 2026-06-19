@@ -26,7 +26,7 @@ function Dashboard() {
             if (!active) return
             setStatus('connecting')
             slowTimer = setTimeout(() => { if (active) setSlow(true) }, 6000)
-            ws = new WebSocket(`ws://localhost:8000/metrics/ws/${user_id}`)
+            ws = new WebSocket(`${import.meta.env.VITE_WS_URL}/metrics/ws/${user_id}`)
 
             ws.onmessage = (event) => {
                 if (!active) return

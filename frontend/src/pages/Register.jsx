@@ -33,7 +33,7 @@ function Register() {
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({username: username, password: password})
         }
-        fetch("http://localhost:8000/auth/register", requestOptions)
+        fetch(`${import.meta.env.VITE_BACKEND_URL}/auth/register`, requestOptions)
        .then(response => {
             if (!response.ok) {
                 return response.json().then(data => {

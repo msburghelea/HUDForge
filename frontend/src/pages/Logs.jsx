@@ -10,7 +10,7 @@ function Logs() {
 
     function fetchLogs(currentPage, currentFilter) {
         const token = localStorage.getItem('token')
-        let url = `http://localhost:8000/logs/logs?page=${currentPage}`
+        let url = `${import.meta.env.VITE_BACKEND_URL}/logs/logs?page=${currentPage}`
         if (currentFilter) url += `&type=${currentFilter}`
 
         fetch(url, {

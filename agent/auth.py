@@ -4,8 +4,7 @@ import json
 
 load_dotenv()
 
-# Mismo backend para todos: solo cambia esto al desplegar a producción.
-DEFAULT_BACKEND_URL = "http://localhost:8000"
+DEFAULT_BACKEND_URL = "https://hudforge.onrender.com"
 
 
 def _config_dir():
