@@ -22,7 +22,15 @@ function Settings() {
                 'authorization': `Bearer ${token}`
             }
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                localStorage.removeItem('token')
+                localStorage.removeItem('user_id')
+                navigate('/login')
+                return null
+            }
+            return response.json()
+        })
         .then(data => {
             if (data) {
                 setCpuMin(data.cpu_threshold_min ?? '')

@@ -16,8 +16,17 @@ function Logs() {
         fetch(url, {
             headers: { 'authorization': `Bearer ${token}` }
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                localStorage.removeItem('token')
+                localStorage.removeItem('user_id')
+                navigate('/login')
+                return null
+            }
+            return response.json()
+        })
         .then(data => {
+            if (!data) return
             setLogs(data.logs)
             setTotalPages(data.pages)
         })
