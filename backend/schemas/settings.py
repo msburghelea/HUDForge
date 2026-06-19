@@ -7,6 +7,6 @@ class  SettingCreate(BaseModel):
     ram_threshold_max: float
     disk_threshold_min: float
     disk_threshold_max: float
-    telegram_chat_id: str
+    telegram_chat_id: str | None = None
     agent_timeout: float
-    telegram_token_id: str
+    telegram_token_id: str | None = None
