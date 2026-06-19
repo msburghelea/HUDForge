@@ -19,13 +19,13 @@ function Download() {
 
                 <div className="bg-white border border-gray-200 rounded-lg p-6 mb-4">
                     <h2 className="text-sm font-medium text-gray-700 mb-3">1. Descarga el agente</h2>
-                    <button disabled className="bg-gray-100 text-gray-400 rounded px-4 py-2 text-sm cursor-not-allowed">Descargar HUDForge Agent (.exe) — Disponible próximamente</button>
+                    <button disabled className="bg-gray-100 text-gray-400 rounded px-4 py-2 text-sm cursor-not-allowed">Descargar HUDForge Agent (.exe), disponible próximamente</button>
                 </div>
 
                 <div className="bg-white border border-gray-200 rounded-lg p-6 mb-4">
                     <h2 className="text-sm font-medium text-gray-700 mb-3">2. Ejecuta el agente y pega tu token</h2>
                     <p className="text-sm text-gray-600 mb-4">Haz doble click en <code className="bg-gray-100 text-gray-700 rounded px-1.5 py-0.5 text-xs">HUDForge.exe</code>. La primera vez te pedirá tu Agent Token: pégalo y pulsa Enter. El agente lo guardará y empezará a enviar métricas automáticamente cada 5 segundos.</p>
-                    <p className="text-sm text-gray-600 mb-2">Este es tu token único — no lo compartas con nadie:</p>
+                    <p className="text-sm text-gray-600 mb-2">Este es tu token único, no lo compartas con nadie:</p>
                     <pre className="bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded p-4 overflow-x-auto">{agentToken}</pre>
                 </div>
 

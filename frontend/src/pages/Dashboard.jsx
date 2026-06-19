@@ -84,27 +84,8 @@ function Dashboard() {
         return 'text-green-600'
     }
 
-    if (!metrics) {
-        return (
-            <div className="min-h-screen bg-gray-50 text-gray-500 flex items-center justify-center">
-                <div className="text-center">
-                    {status === 'error' ? (
-                        <>
-                            <p className="text-sm text-red-600 mb-1">No se pudo conectar con el servidor</p>
-                            <p className="text-xs text-gray-400">Reintentando...</p>
-                        </>
-                    ) : (
-                        <>
-                            <p className="text-sm">Conectando...</p>
-                            {slow && <p className="text-xs text-amber-600 mt-1">Está tardando más de lo normal</p>}
-                        </>
-                    )}
-                </div>
-            </div>
-        )
-    }
-
-    const processCounts = metrics.processes.reduce((acc, name) => {
+    const hasData = metrics !== null
+    const processCounts = (metrics?.processes || []).reduce((acc, name) => {
         acc[name] = (acc[name] || 0) + 1
         return acc
     }, {})
@@ -152,9 +133,18 @@ function Dashboard() {
 
                 {status !== 'online' && (
                     <div className="mb-6 px-4 py-3 text-sm bg-amber-50 border border-amber-200 text-amber-800 rounded-lg">
-                        {status === 'error'
-                            ? 'Sin conexión con el servidor. Mostrando los últimos datos disponibles e intentando reconectar...'
-                            : 'Reconectando... Mostrando los últimos datos disponibles.'}
+                        {hasData ? (
+                            status === 'error'
+                                ? 'Sin conexión con el servidor. Mostrando los últimos datos disponibles e intentando reconectar...'
+                                : 'Reconectando... Mostrando los últimos datos disponibles.'
+                        ) : status === 'error' ? (
+                            'No se pudo conectar con el agente. Comprueba que esté en ejecución. Reintentando automáticamente...'
+                        ) : (
+                            <>
+                                Esperando datos del agente...
+                                {slow && ' Está tardando más de lo normal, comprueba que el agente esté en ejecución.'}
+                            </>
+                        )}
                     </div>
                 )}
 
@@ -162,19 +152,19 @@ function Dashboard() {
                     <div className="bg-white border border-gray-200 rounded-lg p-6">
                         <div className="flex items-baseline justify-between mb-4">
                             <span className="text-sm font-medium text-gray-500">CPU</span>
-                            <span className={`text-3xl font-semibold ${textColor(metrics.cpu)}`}>{metrics.cpu}%</span>
+                            <span className={`font-semibold ${hasData ? `text-3xl ${textColor(metrics.cpu)}` : 'text-base text-gray-400'}`}>{hasData ? `${metrics.cpu}%` : 'Sin datos'}</span>
                         </div>
                         <div className="h-2 w-full bg-gray-100 rounded">
-                            <div className={`h-2 rounded ${barColor(metrics.cpu)}`} style={{ width: `${metrics.cpu}%` }}></div>
+                            <div className={`h-2 rounded ${hasData ? barColor(metrics.cpu) : ''}`} style={{ width: hasData ? `${metrics.cpu}%` : '0%' }}></div>
                         </div>
                     </div>
                     <div className="bg-white border border-gray-200 rounded-lg p-6">
                         <div className="flex items-baseline justify-between mb-4">
                             <span className="text-sm font-medium text-gray-500">Memoria</span>
-                            <span className={`text-3xl font-semibold ${textColor(metrics.ram)}`}>{metrics.ram}%</span>
+                            <span className={`font-semibold ${hasData ? `text-3xl ${textColor(metrics.ram)}` : 'text-base text-gray-400'}`}>{hasData ? `${metrics.ram}%` : 'Sin datos'}</span>
                         </div>
                         <div className="h-2 w-full bg-gray-100 rounded">
-                            <div className={`h-2 rounded ${barColor(metrics.ram)}`} style={{ width: `${metrics.ram}%` }}></div>
+                            <div className={`h-2 rounded ${hasData ? barColor(metrics.ram) : ''}`} style={{ width: hasData ? `${metrics.ram}%` : '0%' }}></div>
                         </div>
                     </div>
                 </div>
@@ -212,19 +202,23 @@ function Dashboard() {
 
                 <div className="bg-white border border-gray-200 rounded-lg p-6 mb-6">
                     <h2 className="text-sm font-medium text-gray-500 mb-5">Disco</h2>
-                    <div className="space-y-5">
-                        {Object.entries(metrics.disk).map(([mountpoint, usage]) => (
-                            <div key={mountpoint}>
-                                <div className="flex justify-between text-sm mb-1.5">
-                                    <span className="text-gray-700">{mountpoint}</span>
-                                    <span className={textColor(usage)}>{usage}%</span>
+                    {hasData ? (
+                        <div className="space-y-5">
+                            {Object.entries(metrics.disk).map(([mountpoint, usage]) => (
+                                <div key={mountpoint}>
+                                    <div className="flex justify-between text-sm mb-1.5">
+                                        <span className="text-gray-700">{mountpoint}</span>
+                                        <span className={textColor(usage)}>{usage}%</span>
+                                    </div>
+                                    <div className="h-2 w-full bg-gray-100 rounded">
+                                        <div className={`h-2 rounded ${barColor(usage)}`} style={{ width: `${usage}%` }}></div>
+                                    </div>
                                 </div>
-                                <div className="h-2 w-full bg-gray-100 rounded">
-                                    <div className={`h-2 rounded ${barColor(usage)}`} style={{ width: `${usage}%` }}></div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <p className="text-sm text-gray-400">Sin datos todavía</p>
+                    )}
                 </div>
 
                 <div className="bg-white border border-gray-200 rounded-lg p-6">
@@ -232,7 +226,7 @@ function Dashboard() {
                         <div className="flex items-baseline gap-2">
                             <h2 className="text-sm font-medium text-gray-500">Procesos</h2>
                             <span className="text-xs text-gray-400">
-                                {processes.length} únicos · {metrics.processes.length} en total
+                                {processes.length} únicos · {metrics?.processes.length || 0} en total
                             </span>
                         </div>
                         <input
