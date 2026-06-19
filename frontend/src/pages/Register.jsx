@@ -5,12 +5,16 @@ function Register() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [token, setToken] = useState('');
     const [error, setError] = useState('')
+    const [loading, setLoading] = useState(false)
     const navigate = useNavigate()
-    
+
     function handleSubmit(e){
         e.preventDefault()
+        setError('')
         if (password.length < 8) {
             setError('La contraseña debe tener mínimo 8 caracteres')
             return
@@ -28,6 +32,7 @@ function Register() {
             return  
         }
 
+        setLoading(true)
         const requestOptions={
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
@@ -49,6 +54,9 @@ function Register() {
         .catch(error => {
             setError(error.message)
         })
+        .finally(() => {
+            setLoading(false)
+        })
     }
 
     return (
@@ -65,13 +73,26 @@ function Register() {
                         </label>
                         <label className="block">
                             <span className="block text-sm text-gray-600 mb-1.5">Contraseña</span>
-                            <input type="text" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-green-600" />
+                            <div className="relative">
+                                <input type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} className="w-full border border-gray-300 rounded px-3 py-2 pr-16 text-sm focus:outline-none focus:border-green-600" />
+                                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-500 hover:text-gray-700">
+                                    {showPassword ? 'Ocultar' : 'Ver'}
+                                </button>
+                            </div>
                         </label>
                         <label className="block">
                             <span className="block text-sm text-gray-600 mb-1.5">Confirmar contraseña</span>
-                            <input type="text" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-green-600" />
+                            <div className="relative">
+                                <input type={showConfirmPassword ? 'text' : 'password'} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className="w-full border border-gray-300 rounded px-3 py-2 pr-16 text-sm focus:outline-none focus:border-green-600" />
+                                <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-500 hover:text-gray-700">
+                                    {showConfirmPassword ? 'Ocultar' : 'Ver'}
+                                </button>
+                            </div>
                         </label>
-                        <button className="w-full bg-green-600 text-white rounded px-4 py-2.5 text-sm hover:bg-green-700">Crear cuenta</button>
+                        <button disabled={loading} className="w-full bg-green-600 text-white rounded px-4 py-2.5 text-sm hover:bg-green-700 disabled:opacity-60 flex items-center justify-center gap-2">
+                            {loading && <span className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>}
+                            {loading ? 'Creando cuenta...' : 'Crear cuenta'}
+                        </button>
                         {error && <p className="text-sm text-red-600">{error}</p>}
                     </form>
                 </div>

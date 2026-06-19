@@ -39,7 +39,6 @@ def _run_setup():
 
     config = _load_config()
     config["agent_token"] = token
-    config.setdefault("backend_url", os.getenv("BACKEND_URL", DEFAULT_BACKEND_URL))
     _save_config(config)
 
     print(f"Configuracion guardada en: {_config_path()}")
@@ -57,5 +56,4 @@ def get_agent_token():
 
 
 def get_backend():
-    config = _load_config()
-    return config.get("backend_url") or os.getenv("BACKEND_URL") or DEFAULT_BACKEND_URL
+    return os.getenv("BACKEND_URL") or DEFAULT_BACKEND_URL
