@@ -37,7 +37,11 @@ def login(user: UserLogin, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Usuario no encontrado")
     else:
         if verify_password(user.password,db_user.password):
-            return create_access_token({"user": db_user.username})
+            return {
+                "access_token": create_access_token({"user": db_user.username}),
+                "user_id": str(db_user.id),
+                "agent_token": db_user.agent_token
+            }      
         else:
             raise HTTPException(status_code=401, detail="Contraseña Incorrecta")
 

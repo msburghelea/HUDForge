@@ -9,6 +9,26 @@ from fastapi import Header
 from models.users import User
 from utils.alerts import check_alerts
 from models.logs import log
+from fastapi import WebSocket
+import asyncio
+
+class ConnectionManager:
+    def __init__(self):
+        self.active_connections = {}
+
+    async def connect(self, user_id, websocket):
+        await websocket.accept()
+        self.active_connections[user_id] = websocket
+
+    def disconnect(self, user_id):
+        self.active_connections.pop(user_id, None)
+
+    async def send(self, user_id, data):
+        if user_id in self.active_connections:
+            await self.active_connections[user_id].send_json(data)
+
+manager = ConnectionManager()
+
 
 router=APIRouter()
 
@@ -21,7 +41,7 @@ def get_db():
 
 
 @router.post("/send")
-def get_metrics(data: MetricCreate, db: Session =Depends(get_db), x_agent_token: str = Header(...) ):
+async def get_metrics(data: MetricCreate, db: Session =Depends(get_db), x_agent_token: str = Header(...) ):
     db_user = db.query(User).filter(User.agent_token == x_agent_token).first()
     if not db_user:
         raise HTTPException(status_code=401, detail="Token inválido")
@@ -33,6 +53,18 @@ def get_metrics(data: MetricCreate, db: Session =Depends(get_db), x_agent_token:
     db.add(new_log)
     db.commit()
     check_alerts(db_user.id, data, new_metric.id, db)
+    await manager.send(str(db_user.id), data.dict())
+
     return {"message": "Métricas guardadas correctamente"}
 
 
+
+
+@router.websocket("/ws/{user_id}")
+async def websocket_endpoint(websocket: WebSocket, user_id: str):
+    await manager.connect(user_id, websocket)
+    try:
+        while True:
+            await websocket.receive_text()  # mantiene la conexión viva
+    except:
+        manager.disconnect(user_id)
